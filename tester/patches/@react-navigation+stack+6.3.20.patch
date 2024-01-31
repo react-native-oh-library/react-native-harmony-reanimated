@@ -1,0 +1,36 @@
+diff --git a/node_modules/@react-navigation/stack/src/views/Stack/StackView.tsx b/node_modules/@react-navigation/stack/src/views/Stack/StackView.tsx
+index 6bbce10..65b7d28 100644
+--- a/node_modules/@react-navigation/stack/src/views/Stack/StackView.tsx
++++ b/node_modules/@react-navigation/stack/src/views/Stack/StackView.tsx
+@@ -427,15 +427,15 @@ export default class StackView extends React.Component<Props, State> {
+ 
+     return (
+       <GestureHandlerWrapper style={styles.container}>
+-        <SafeAreaProviderCompat>
++        {/* <SafeAreaProviderCompat>
+           <SafeAreaInsetsContext.Consumer>
+-            {(insets) => (
++            {(insets) => ( */}
+               <ModalPresentationContext.Consumer>
+                 {(isParentModal) => (
+                   <HeaderShownContext.Consumer>
+                     {(isParentHeaderShown) => (
+                       <CardStack
+-                        insets={insets as EdgeInsets}
++                        insets={{left: 0, right: 0, top: 0, bottom: 0} as EdgeInsets}
+                         isParentHeaderShown={isParentHeaderShown}
+                         isParentModal={isParentModal}
+                         getPreviousRoute={this.getPreviousRoute}
+@@ -459,9 +459,9 @@ export default class StackView extends React.Component<Props, State> {
+                   </HeaderShownContext.Consumer>
+                 )}
+               </ModalPresentationContext.Consumer>
+-            )}
+-          </SafeAreaInsetsContext.Consumer>
+-        </SafeAreaProviderCompat>
++            {/* )} */}
++          {/* </SafeAreaInsetsContext.Consumer>
++        </SafeAreaProviderCompat> */}
+       </GestureHandlerWrapper>
+     );
+   }
