@@ -7,6 +7,8 @@ set(RNOH_CPP_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../../../../node_modules/react-
 
 add_subdirectory("${RNOH_CPP_DIR}" ./rn)
 add_subdirectory("${OH_MODULES_DIR}/rnoh-reanimated/src/main/cpp" ./reanimated)
+add_subdirectory("${OH_MODULES_DIR}/rnoh-gesture-handler/src/main/cpp" ./gesture_handler)
+
 
 add_library(rnoh_app SHARED
     "./PackageProvider.cpp"
@@ -14,3 +16,5 @@ add_library(rnoh_app SHARED
 )
 target_link_libraries(rnoh_app PUBLIC rnoh)
 target_link_libraries(rnoh_app PUBLIC rnoh_reanimated)
+target_link_libraries(rnoh_app PUBLIC rnoh_gesture_handler)
+

@@ -10,9 +10,24 @@ import {
 } from 'rnoh'
 import font from '@ohos.font';
 import { createRNPackages } from '../RNPackagesFactory'
+import { RNGestureHandlerButton, RNGestureHandlerRootView } from 'rnoh-gesture-handler';
+
 
 @Builder
 export function CustomComponentBuilder(ctx: ComponentBuilderContext) {
+  if (ctx.componentName === RNGestureHandlerRootView.NAME) {
+    RNGestureHandlerRootView({
+      tag: ctx.tag,
+      ctx: ctx.rnohContext,
+      buildCustomComponent: CustomComponentBuilder
+    })
+  } else if (ctx.descriptor.type === RNGestureHandlerButton.DESCRIPTOR_TYPE) {
+    RNGestureHandlerButton({
+      tag: ctx.descriptor.tag,
+      ctx: ctx.rnohContext,
+      buildCustomComponent: CustomComponentBuilder
+    })
+  }
 }
 
 /**
