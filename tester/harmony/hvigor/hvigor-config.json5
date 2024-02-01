@@ -1,8 +1,7 @@
 {
-  hvigorVersion: 'file:./hvigor-3.2.1-s.tgz',
-  dependencies: {
-    '@ohos/hvigor-ohos-plugin': 'file:./hvigor-ohos-plugin-3.2.1-s.tgz',
-    rollup: 'file:./rollup.tgz'
+  "hvigorVersion": "4.0.1",
+  "dependencies": {
+    "@ohos/hvigor-ohos-plugin": "4.0.1"
   },
   execution: {
     // "daemon": true,                          /* Enable daemon compilation. Default: true */
