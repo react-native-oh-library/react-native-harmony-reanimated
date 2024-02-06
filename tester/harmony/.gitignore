@@ -1,5 +1,6 @@
 package-lock.json
 react_native_modules/rnoh
+react_native_modules/gesture_handler
 oh_modules/
 /config
 
