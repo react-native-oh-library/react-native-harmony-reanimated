@@ -1,0 +1,16 @@
+{
+  "string": [
+    {
+      "name": "module_desc",
+      "value": "module description"
+    },
+    {
+      "name": "WebviewAbility_desc",
+      "value": "description"
+    },
+    {
+      "name": "WebviewAbility_label",
+      "value": "label"
+    }
+  ]
+}
