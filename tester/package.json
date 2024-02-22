@@ -10,7 +10,8 @@
     "dev": "npm run install:pkg && react-native bundle-harmony",
     "lint": "eslint .",
     "start": "react-native start",
-    "test": "jest"
+    "test": "jest",
+    "codegen": "react-native codegen-harmony --rnoh-module-path ./harmony/react_native_modules/rnoh"
   },
   "dependencies": {
     "@fortawesome/free-solid-svg-icons": "^6.5.1",
@@ -20,7 +21,7 @@
     "react": "18.2.0",
     "react-native": "0.72.5",
     "react-native-harmony": "npm:@rnoh/react-native-harmony@^0.72.14",
-    "react-native-harmony-gesture-handler": "npm:@rnoh/react-native-harmony-gesture-handler@2.12.6",
+    "react-native-harmony-gesture-handler": "file:./rnoh-react-native-harmony-gesture-handler-2.12.6.tgz",
     "react-native-harmony-reanimated": "file:../react-native-harmony-reanimated/rnoh-react-native-harmony-reanimated-3.6.0.tgz",
     "react-native-reanimated": "3.6.0",
     "react-native-safe-area-context": "4.8.2",
@@ -41,9 +42,9 @@
     "metro-react-native-babel-preset": "0.76.8",
     "patch-package": "^8.0.0",
     "prettier": "^2.4.1",
+    "react-native-gesture-handler": "2.12.1",
     "react-test-renderer": "18.2.0",
-    "typescript": "4.8.4",
-    "react-native-gesture-handler": "2.12.1"
+    "typescript": "4.8.4"
   },
   "engines": {
     "node": ">=16"
