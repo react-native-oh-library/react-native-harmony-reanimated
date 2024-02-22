@@ -1,0 +1,16 @@
+{
+  "string": [
+    {
+      "name": "module_desc",
+      "value": "module description"
+    },
+    {
+      "name": "ReanimatedAbility_desc",
+      "value": "description"
+    },
+    {
+      "name": "ReanimatedAbility_label",
+      "value": "label"
+    }
+  ]
+}

@@ -1,0 +1,44 @@
+{
+  "name": "@react-native-oh-tpl/react-native-reanimated",
+  "harmony": {
+    "alias": "react-native-reanimated"
+  },
+  "version": "3.6.0",
+  "description": "",
+  "main": "lib/index.js",
+    "scripts": {
+    "build": "tsc",
+    "prepack": "npm run build",
+    "pack:harmony": "react-native pack-harmony --oh-module-path ../tester/harmony/react_native_modules/reanimated --harmony-dir-path ./harmony --package-json-path ./package.json",
+    "pack:prod": "npm run pack:harmony && npm pack"
+  },
+  "peerDependencies": {
+    "react-native": "*",
+    "react-native-harmony": "*"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@types/node": "^20.11.4",
+    "react-native-reanimated": "3.6.0"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.23.4",
+    "@babel/core": "^7.23.7",
+    "@babel/preset-env": "^7.23.8",
+    "@babel/preset-typescript": "^7.23.3",
+    "@babel/runtime": "^7.23.8",
+    "@types/invariant": "^2.2.35",
+    "@types/react": "^18.2.15",
+    "metro-react-native-babel-preset": "^0.77.0",
+    "react": "18.2.0",
+    "react-native": "0.72.5",
+    "react-native-harmony": "npm:@rnoh/react-native-harmony@^0.72.14",
+    "typescript": "^5.1.6"
+  },
+  "files": [
+    "lib",
+    "harmony",
+    "src"
+  ]
+}

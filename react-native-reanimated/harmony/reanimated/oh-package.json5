@@ -1,0 +1,11 @@
+{
+  name: 'rnoh-reanimated',
+  version: '3.6.0',
+  description: 'Please describe the basic information.',
+  main: 'index.ets',
+  author: '',
+  license: '',
+  dependencies: {
+    rnoh: 'file:../rnoh',
+  },
+}

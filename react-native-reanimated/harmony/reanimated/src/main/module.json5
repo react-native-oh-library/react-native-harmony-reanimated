@@ -1,0 +1,10 @@
+{
+  "module": {
+    "name": "reanimated",
+    "type": "har",
+    "deviceTypes": [
+      "default",
+      "tablet"
+    ]
+  }
+}
