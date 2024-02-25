@@ -9,6 +9,7 @@ set(CMAKE_CXX_FLAGS "-fstack-protector-strong -Wl,-z,relro,-z,now,-z,noexecstack
 
 file(GLOB GENERATED_CPP_FILES "./generated/*.cpp")
 
+file(GLOB GENERATED_CPP_FILES "./generated/*.cpp")
 add_subdirectory("${RNOH_CPP_DIR}" ./rn)
 add_subdirectory("${OH_MODULES_DIR}/rnoh-gesture-handler/src/main/cpp" ./gesture_handler)
 add_subdirectory("${OH_MODULES_DIR}/rnoh-reanimated/src/main/cpp" ./reanimated)

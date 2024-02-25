@@ -1,9 +1,10 @@
 {
   "name": "@rnoh/react-native-harmony-reanimated",
   "harmony": {
-    "alias": "react-native-reanimated"
+    "alias": "react-native-reanimated",
+    "redirectInternalImports": true
   },
-  "version": "3.6.0",
+  "version": "3.6.1",
   "description": "",
   "main": "lib/index.js",
     "scripts": {
@@ -34,12 +35,13 @@
     "metro-react-native-babel-preset": "^0.77.0",
     "react": "18.2.0",
     "react-native": "0.72.5",
-    "react-native-harmony": "npm:@rnoh/react-native-harmony@^0.72.14",
+    "react-native-harmony": "npm:@rnoh/react-native-harmony@^0.72.16",
     "typescript": "^5.1.6"
   },
   "files": [
     "lib",
     "harmony",
-    "src"
+    "src",
+    "./harmony.tar.gz"
   ]
 }

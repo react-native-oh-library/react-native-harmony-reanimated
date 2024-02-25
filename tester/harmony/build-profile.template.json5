@@ -1,0 +1,40 @@
+{
+  app: {
+    products: [
+      {
+        name: 'default',
+        signingConfig: 'default',
+        compileSdkVersion: "4.1.0(11)",
+        compatibleSdkVersion: "4.1.0(11)",
+        runtimeOS: 'HarmonyOS'
+      }
+    ],
+    "signingConfigs": []
+  },
+  modules: [
+    {
+      name: 'entry',
+      srcPath: './entry',
+      targets: [
+        {
+          name: 'default',
+          applyToProducts: [
+            'default'
+          ],
+        },
+      ],
+    },
+    {
+      name: "rnoh",
+      srcPath: "./react_native_modules/rnoh",
+    },
+    {
+      "name": "gesture_handler",
+      "srcPath": "./react_native_modules/gesture_handler",
+    },
+    {
+      "name": "reanimated",
+      "srcPath": "./react_native_modules/reanimated",
+    },
+  ],
+}
