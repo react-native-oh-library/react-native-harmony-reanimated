@@ -1,5 +1,5 @@
 {
-  "name": "@react-native-oh-tpl/react-native-harmony-reanimated",
+  "name": "@react-native-oh-tpl/react-native-reanimated",
   "harmony": {
     "alias": "react-native-reanimated",
     "redirectInternalImports": true
