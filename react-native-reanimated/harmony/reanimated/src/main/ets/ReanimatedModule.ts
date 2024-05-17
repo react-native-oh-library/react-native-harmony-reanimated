@@ -1,4 +1,4 @@
-import { RNOHLogger, Tag, TurboModule, TurboModuleContext } from 'rnoh/ts';
+import { RNOHLogger, Tag, TurboModule, TurboModuleContext } from '@rnoh/react-native-openharmony/ts';
 
 export class ReanimatedModule extends TurboModule {
   static NAME = "ReanimatedModule"

@@ -1,5 +1,5 @@
-import {RNPackage, TurboModuleContext, TurboModulesFactory} from 'rnoh/ts';
-import type {TurboModule} from 'rnoh/ts';
+import {RNPackage, TurboModuleContext, TurboModulesFactory} from '@rnoh/react-native-openharmony/ts';
+import type {TurboModule} from '@rnoh/react-native-openharmony/ts';
 import {ReanimatedModule} from './ReanimatedModule';
 class ReanimatedTurboModulesFactory extends TurboModulesFactory {
   createTurboModule(name: string): TurboModule | null {
