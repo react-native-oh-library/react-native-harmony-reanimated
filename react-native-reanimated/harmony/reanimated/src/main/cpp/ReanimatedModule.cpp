@@ -54,7 +54,7 @@ namespace rnoh {
             ArkJS arkJs(m_ctx.env);
             auto napiArgs = arkJs.convertIntermediaryValueToNapiValue(dynamic);
             auto napiTag = arkJs.createInt(tag);
-            auto napiTurboModuleObject = arkJs.getObject(m_ctx.arkTsTurboModuleInstanceRef);
+            auto napiTurboModuleObject = arkJs.getObject(m_ctx.arkTSTurboModuleInstanceRef);
             napiTurboModuleObject.call("setViewProps", {napiTag, napiArgs});
         };
         auto progressLayoutAnimation = [=](jsi::Runtime &rt, int tag, const jsi::Object &newStyle,
