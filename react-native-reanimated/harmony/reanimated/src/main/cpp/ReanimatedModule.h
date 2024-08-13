@@ -12,7 +12,7 @@ namespace rnoh {
         void installTurboModule(facebook::jsi::Runtime &rt);
 
     private:
-        std::weak_ptr<reanimated::NativeReanimatedModule> weakNativeReanimatedModule_;
+        std::shared_ptr<reanimated::NativeReanimatedModule> nativeReanimatedModule_;
         void injectDependencies(facebook::jsi::Runtime &rt);
         ReanimatedNodesManager nodesManager;
     };

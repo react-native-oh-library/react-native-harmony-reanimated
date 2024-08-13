@@ -116,9 +116,10 @@ namespace rnoh {
         auto nativeReanimatedModule =
             std::make_shared<NativeReanimatedModule>(rt, jsInvoker, jsQueue, uiScheduler, platformDepMethodsHolder);
 
-        weakNativeReanimatedModule_ = nativeReanimatedModule;
+        nativeReanimatedModule_ = nativeReanimatedModule;
         ReanimatedPerformOperations reanimatedPerformOperations = [this]() {
-            if (auto nativeReanimatedModule = weakNativeReanimatedModule_.lock()) {
+            auto weakNativeReanimatedModule_ = std::weak_ptr<NativeReanimatedModule>(nativeReanimatedModule_);
+            if (auto nativeReanimatedModule = weakNativeReanimatedModule_.lock(); nativeReanimatedModule != nullptr) {
                 nativeReanimatedModule->performOperations();
             }
         };
@@ -133,7 +134,8 @@ namespace rnoh {
     }
     void ReanimatedModule::injectDependencies(facebook::jsi::Runtime &rt) {
         const auto uiManager = m_ctx.scheduler->getUIManager();
-        if (auto nativeReanimatedModule = weakNativeReanimatedModule_.lock()) {
+        auto weakNativeReanimatedModule_ = std::weak_ptr<NativeReanimatedModule>(nativeReanimatedModule_);
+        if (auto nativeReanimatedModule = weakNativeReanimatedModule_.lock(); nativeReanimatedModule != nullptr) {
             nativeReanimatedModule->initializeFabric(uiManager);
         }
     }
