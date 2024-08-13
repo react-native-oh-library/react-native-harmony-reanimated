@@ -5,6 +5,7 @@
 #include "WorkletRuntimeCollector.h"
 #include "RNRuntimeDecorator.h"
 #include "TransformParser.h"
+#include "RNOH/RNInstance.h"
 
 using namespace facebook;
 using namespace reanimated;
@@ -37,6 +38,12 @@ namespace rnoh {
         };
         auto synchronouslyUpdateUIPropsFunction = [this](jsi::Runtime &rt, Tag tag, const jsi::Object &props) {
             auto dynamic = jsi::dynamicFromValue(rt, jsi::Value(rt, props));
+#ifdef C_API_ARCH
+            if (auto instance = m_ctx.instance.lock(); instance != nullptr) {
+                instance->synchronouslyUpdateViewOnUIThread(tag, dynamic);
+                return;
+            }
+#endif
             auto dynamicProps = dynamic.items();
             bool shouldEraseTransform = false;
             for (auto &prop : dynamicProps) {
