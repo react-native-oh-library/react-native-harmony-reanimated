@@ -1,0 +1,13 @@
+{
+  license: 'ISC',
+  types: '',
+  devDependencies: {},
+  author: '',
+  name: '@react-native-oh-tpl/react-native-safe-area-context',
+  description: 'Please describe the basic information.',
+  main: 'index.ets',
+  version: '4.7.4-0.1.8',
+  dependencies: {
+    '@rnoh/react-native-openharmony': 'file:../react_native_openharmony',
+  },
+}

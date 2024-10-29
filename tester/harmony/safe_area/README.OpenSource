@@ -1,0 +1,11 @@
+[
+    {
+        "Name": "react-native-safe-area-context",
+        "License": "MIT License",
+        "License File": "https://github.com/th3rdwave/react-native-safe-area-context/blob/main/LICENSE",
+        "Version Number": "4.7.4",
+        "Owner" : "Janic Duplessis <janicduplessis@gmail.com>"
+        "Upstream URL": "https://github.com/th3rdwave/react-native-safe-area-context",
+        "Description": "A flexible way to handle safe area, also works on Android and Web!"
+    }
+]

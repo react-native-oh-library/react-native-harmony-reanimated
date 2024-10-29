@@ -1,0 +1,7 @@
+{
+  module: {
+    name: 'safe_area',
+    type: 'har',
+    deviceTypes: ['default'],
+  },
+}
