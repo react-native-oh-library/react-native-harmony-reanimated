@@ -1,0 +1,16 @@
+{
+    "git": {
+      "commitMessage": "Release v${version}",
+      "tagName": "v${version}"
+    },
+    "npm": {
+      "publish": false
+    },
+    "github": {
+        "release": true,
+        "GITHUB_TOKEN": "${process.env.RNOH_REPO_TOKEN}",
+        "comments": {
+            "submit": true
+        }
+    }
+  }

@@ -6,7 +6,7 @@
   "repository": '',
   "version": "1.0.0",
   "dependencies": {
-    "@rnoh/react-native-openharmony": "file:../react_native_harmony/react_native_openharmony.har",
+    "@rnoh/react-native-openharmony": "file:../react_native_openharmony.har",
     "@rnoh/react-native-gesture-handler": "file:../../node_modules/@react-native-oh-tpl/react-native-gesture-handler/harmony/gesture_handler.har",
     "@rnoh/react-native-openharmony-reanimated": "file:../reanimated",
     "@react-native-oh-tpl/react-native-safe-area-context": "file:../../node_modules/@react-native-oh-tpl/react-native-safe-area-context/harmony/safe_area.har"

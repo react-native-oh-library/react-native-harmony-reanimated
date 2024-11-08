@@ -13,7 +13,8 @@
     "prepack": "npm run build",
     "prepublishOnly": "npm run prepack && react-native verify-package-harmony --package-path . --skip-checks oh_package_name_is_derived_from_npm_package_name",
     "update_version": "node ./scripts/update-version.js",
-    "deploy": "node ./scripts/deploy.js"
+    "deploy": "node ./scripts/deploy.js",
+    "release": "release-it --ci"
   },
   "peerDependencies": {
     "react": "*",
@@ -40,6 +41,7 @@
     "react": "18.2.0",
     "react-native": "0.72.5",
     "react-native-builder-bob": "^0.21.3",
+    "release-it": "^17.10.0",
     "typescript": "^5.1.6"
   },
   "files": [

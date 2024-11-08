@@ -5,7 +5,7 @@
   "scripts": {
     "android": "react-native run-android",
     "pack:pkg": "cd ../react-native-harmony-reanimated && npm pack && cd ../tester",
-    "install:pkg": "npm uninstall react-native-harmony-reanimated && npm run pack:pkg && npm i react-native-harmony-reanimated@file:../react-native-harmony-reanimated/react-native-oh-tpl-react-native-reanimated-3.6.3.tgz",
+    "install:pkg": "npm uninstall react-native-harmony-reanimated && npm run pack:pkg && npm i react-native-harmony-reanimated@file:../react-native-harmony-reanimated/suilyy-react-native-reanimated-3.6.41.tgz",
     "dev": "npm run install:pkg &&  npm run codegen && react-native bundle-harmony",
     "codegen": "react-native codegen-harmony --rnoh-module-path ./harmony/oh_modules/@rnoh/react-native-openharmony",
     "lint": "eslint .",
@@ -21,8 +21,8 @@
     "@react-navigation/stack": "6.3.20",
     "react": "18.2.0",
     "react-native": "0.72.5",
-    "react-native-harmony": "file:./rnoh_package/react-native-harmony/rnoh-react-native-harmony-0.72.28.tgz",
-    "react-native-harmony-reanimated": "file:../react-native-harmony-reanimated/react-native-oh-tpl-react-native-reanimated-3.6.3.tgz",
+    "react-native-harmony": "file:./rnoh_package/react-native-harmony/rnoh-react-native-harmony-0.72.38.tgz",
+    "react-native-harmony-reanimated": "file:../react-native-harmony-reanimated/suilyy-react-native-reanimated-3.6.41.tgz",
     "react-native-reanimated": "3.6.0",
     "react-native-safe-area-context": "4.8.2",
     "react-native-screens": "^3.29.0"

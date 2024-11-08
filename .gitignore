@@ -6,3 +6,5 @@ bundle.harmony.js
 *.code-workspace
 .DS_Store
 tester/package-lock.json
+react-native-harmony-reanimated/react_native_openharmony.har
+tester/rnoh_package/react-native-harmony/react-native-openharmony.har
