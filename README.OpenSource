@@ -1,0 +1,11 @@
+[
+    {
+        "Name": "react-native-reanimated",
+        "License": "MIT License",
+        "License File": "LICENSE",
+        "Version Number": "3.6.0",
+        "Owner" : "xiafeng@huawei.com",
+        "Upstream URL": "https://github.com/software-mansion/react-native-reanimated",
+        "Description": "React Native's Animated library reimplemented"
+    }
+]
