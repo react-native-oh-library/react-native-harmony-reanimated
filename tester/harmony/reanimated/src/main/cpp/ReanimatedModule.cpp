@@ -173,6 +173,8 @@ void ReanimatedModule::installTurboModule(facebook::jsi::Runtime &rt) {
                 auto eventCopy = rawEvent;
                 eventCopy.type = "on" + eventType.substr(5);
                 return nativeReanimatedModule->handleRawEvent(eventCopy, frameTime);
+            } else if (eventType.rfind("topLayout", 0) == 0) { // 针对onLayout事件，不阻断，采用系统处理
+                return false;
             }
             return nativeReanimatedModule->handleRawEvent(rawEvent, frameTime);
         });
