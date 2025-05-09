@@ -7,5 +7,7 @@ namespace rnoh {
         ReanimatedPackage(Package::Context ctx) : Package(ctx) {}
     
         std::unique_ptr<TurboModuleFactoryDelegate> createTurboModuleFactoryDelegate() override;
+    
+        std::vector<ArkTSMessageHandler::Shared> createArkTSMessageHandlers() override;
     };
 } // namespace rnoh
