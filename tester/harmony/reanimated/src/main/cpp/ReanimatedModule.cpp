@@ -35,6 +35,9 @@ ReanimatedModule::~ReanimatedModule() {
     if (eventListener) {
         m_ctx.scheduler->removeEventListener(eventListener);
     }
+    if (keyboardEventDataUpdater_) {
+        keyboardEventDataUpdater_ = nullptr;
+    }
 }
 
 void ReanimatedModule::installTurboModule(facebook::jsi::Runtime &rt) {
@@ -102,12 +105,38 @@ void ReanimatedModule::installTurboModule(facebook::jsi::Runtime &rt) {
         // TODO
     };
     auto subscribeForKeyboardEventsFunction =
-        [](std::function<void(int keyboardState, int height)> keyboardEventDataUpdater, bool isStatusBarTranslucent) {
-            // TODO
+        [weakSelf = weak_from_this()](std::function<void(int keyboardState, int height)> keyboardEventDataUpdater,
+                                      bool isStatusBarTranslucent) {
+            auto self = weakSelf.lock();
+            if (!self) {
+                return 0;
+            }
+            self->keyboardEventDataUpdater_ = std::move(keyboardEventDataUpdater);
+            auto weakExecutor = std::weak_ptr(self->m_ctx.taskExecutor);
+            if (auto taskExecutor = weakExecutor.lock()) {
+                taskExecutor->runTask(TaskThread::MAIN, [ctx = self->m_ctx, isStatusBarTranslucent]() {
+                    ArkJS arkJs(ctx.env);
+                    // arkJs.createBoolean(isStatusBarTranslucent);
+                    auto napiTurboModuleObject = arkJs.getObject(ctx.arkTSTurboModuleInstanceRef);
+                    napiTurboModuleObject.call("subscribeKeyBordListeners", {});
+                });
+            }
             return 0;
         };
-    auto unsubscribeFromKeyboardEventsFunction = [](int listenerId) {
-        // TODO
+    auto unsubscribeFromKeyboardEventsFunction = [weakSelf = weak_from_this()](int listenerId) {
+        auto self = weakSelf.lock();
+        if (!self) {
+            return 0;
+        }
+        auto weakExecutor = std::weak_ptr(self->m_ctx.taskExecutor);
+        if (auto taskExecutor = weakExecutor.lock()) {
+            taskExecutor->runTask(TaskThread::MAIN, [ctx = self->m_ctx]() {
+                ArkJS arkJs(ctx.env);
+                auto napiTurboModuleObject = arkJs.getObject(ctx.arkTSTurboModuleInstanceRef);
+                napiTurboModuleObject.call("unsubscribeKeyBordListeners", {});
+            });
+        }
+        return 0;
     };
     auto setGestureStateFunction = [weakSelf = weak_from_this()](int handlerTag, int newState) {
         auto self = weakSelf.lock();
@@ -184,6 +213,12 @@ void ReanimatedModule::injectDependencies(facebook::jsi::Runtime & /*rt*/) {
     const auto uiManager = m_ctx.scheduler->getUIManager();
     if (auto nativeReanimatedModule = weakNativeReanimatedModule_.lock()) {
         nativeReanimatedModule->initializeFabric(uiManager);
+    }
+}
+
+void ReanimatedModule::callKeyBord(double height, int status) {
+    if (keyboardEventDataUpdater_) {
+        keyboardEventDataUpdater_(status, height);
     }
 }
 } // namespace rnoh
