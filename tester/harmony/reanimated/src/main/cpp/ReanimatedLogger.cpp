@@ -1,18 +1,29 @@
-#include "ReanimatedLogger.h"
+#include <PlatformLogger.h>
 #include "glog/logging.h"
 
-namespace reanimated {
+namespace worklets {
+void PlatformLogger::log(const char *str)
+{
+    LOG(INFO) << str;
+}
 
-    std::unique_ptr<reanimated::LoggerInterface> Logger::instance = std::make_unique<ReanimatedLogger>();
+void PlatformLogger::log(const std::string &str)
+{
+    log(str.c_str());
+}
 
-    void ReanimatedLogger::log(const char *str) { LOG(INFO) << str; }
+void PlatformLogger::log(const double d)
+{
+    LOG(INFO) << d;
+}
 
-    void ReanimatedLogger::log(const std::string &str) { log(str.c_str()); }
+void PlatformLogger::log(const int i)
+{
+    LOG(INFO) << i;
+}
 
-    void ReanimatedLogger::log(double d) { LOG(INFO) << d; }
-
-    void ReanimatedLogger::log(int i) { LOG(INFO) << i; }
-
-    void ReanimatedLogger::log(bool b) { LOG(INFO) << b; }
-
-} // namespace reanimated
+void PlatformLogger::log(const bool b)
+{
+    LOG(INFO) << b;
+}
+} // namespace worklets

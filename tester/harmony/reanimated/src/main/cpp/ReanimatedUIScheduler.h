@@ -5,9 +5,7 @@
 #include "RNOH/TaskExecutor/TaskExecutor.h"
 
 namespace rnoh {
-
-class ReanimatedUIScheduler : public std::enable_shared_from_this<ReanimatedUIScheduler>,
-                              public reanimated::UIScheduler {
+class ReanimatedUIScheduler : public std::enable_shared_from_this<ReanimatedUIScheduler>, public worklets::UIScheduler {
 private:
     std::shared_ptr<TaskExecutor> m_taskExecutor;
 

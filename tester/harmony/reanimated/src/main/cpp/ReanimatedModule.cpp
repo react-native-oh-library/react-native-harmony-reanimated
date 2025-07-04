@@ -7,30 +7,35 @@
 #include "RNRuntimeDecorator.h"
 #include "TransformParser.h"
 #include "RNOH/RNInstanceCAPI.h"
+#include "WorkletsModule.h"
 
 using namespace facebook;
 using namespace reanimated;
+using namespace worklets;
 namespace rnoh {
-
-static double getMillisSinceEpoch() {
+static double getMillisSinceEpoch()
+{
     auto now = std::chrono::high_resolution_clock::now();
     auto frameTime = std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch());
     return frameTime.count();
 }
 
 jsi::Value installTurboModule(facebook::jsi::Runtime &rt, react::TurboModule &turboModule,
-                              const facebook::jsi::Value *args, size_t count) {
+    const facebook::jsi::Value *args, size_t count)
+{
     auto self = static_cast<ReanimatedModule *>(&turboModule);
     self->installTurboModule(rt);
-    return facebook::jsi::Value::undefined();
+    return facebook::jsi::Value(true);
 }
 
 ReanimatedModule::ReanimatedModule(const ArkTSTurboModule::Context ctx, const std::string name)
-    : ArkTSTurboModule(ctx, name) {
-    methodMap_ = {{"installTurboModule", {0, rnoh::installTurboModule}}};
+    : ArkTSTurboModule(ctx, name)
+{
+    methodMap_ = { { "installTurboModule", { 0, rnoh::installTurboModule } } };
 }
 
-ReanimatedModule::~ReanimatedModule() {
+ReanimatedModule::~ReanimatedModule()
+{
     LOG(INFO) << "ReanimatedModule::~ReanimatedModule";
     if (eventListener) {
         m_ctx.scheduler->removeEventListener(eventListener);
@@ -40,7 +45,8 @@ ReanimatedModule::~ReanimatedModule() {
     }
 }
 
-void ReanimatedModule::installTurboModule(facebook::jsi::Runtime &rt) {
+void ReanimatedModule::installTurboModule(facebook::jsi::Runtime &rt)
+{
     auto nodesManager = std::make_shared<ReanimatedNodesManager>(
         [weakExecutor = std::weak_ptr(m_ctx.taskExecutor)](TaskExecutor::Task &&task) {
             if (auto taskExecutor = weakExecutor.lock()) {
@@ -48,10 +54,8 @@ void ReanimatedModule::installTurboModule(facebook::jsi::Runtime &rt) {
             }
         });
 
-    std::shared_ptr<UIScheduler> uiScheduler = std::make_shared<ReanimatedUIScheduler>(m_ctx.taskExecutor);
     auto maybeFlushUIUpdatesQueueFunction = [nodesManager]() { nodesManager->maybeFlushUIUpdatesQueue(); };
-    auto requestRender = [weakSelf = weak_from_this(), nodesManager](std::function<void(double)> onRender,
-                                                                     jsi::Runtime & /*rt*/) {
+    auto requestRender = [weakSelf = weak_from_this(), nodesManager](std::function<void(double)> onRender) {
         auto self = weakSelf.lock();
         if (!self) {
             return;
@@ -65,28 +69,8 @@ void ReanimatedModule::installTurboModule(facebook::jsi::Runtime &rt) {
             });
     };
 
-    auto synchronouslyUpdateUIPropsFunction = [weakInstance = m_ctx.instance](jsi::Runtime &rt, Tag tag,
-                                                                              const jsi::Object &props) {
-        auto dynamic = jsi::dynamicFromValue(rt, jsi::Value(rt, props));
-        auto instance = weakInstance.lock();
-        auto instanceCapi = std::dynamic_pointer_cast<RNInstanceCAPI>(instance);
-        if (!instanceCapi) {
-            return;
-        }
-        auto componentInstance = instanceCapi->findComponentInstanceByTag(tag);
-        if (!componentInstance) {
-            return;
-        }
-
-        // We want to restore the ignored props after the update,
-        // because reanimated handles setting correct props on React renders on its own
-        auto ignoredProps = componentInstance->getIgnoredPropKeys();
-        instanceCapi->synchronouslyUpdateViewOnUIThread(tag, dynamic);
-        componentInstance->setIgnoredPropKeys(std::move(ignoredProps));
-    };
-
     auto progressLayoutAnimation = [=](jsi::Runtime &rt, int tag, const jsi::Object &newStyle,
-                                       bool isSharedTransition) {
+        bool isSharedTransition) {
         // noop
     };
 
@@ -97,7 +81,7 @@ void ReanimatedModule::installTurboModule(facebook::jsi::Runtime &rt) {
     auto getAnimationTimestamp = getMillisSinceEpoch;
 
     auto registerSensorFunction = [](int sensorType, int interval, int iosReferenceFrame,
-                                     std::function<void(double[], int)> setter) -> int {
+        std::function<void(double[], int)> setter) -> int {
         // TODO
         return -1;
     };
@@ -106,7 +90,7 @@ void ReanimatedModule::installTurboModule(facebook::jsi::Runtime &rt) {
     };
     auto subscribeForKeyboardEventsFunction =
         [weakSelf = weak_from_this()](std::function<void(int keyboardState, int height)> keyboardEventDataUpdater,
-                                      bool isStatusBarTranslucent) {
+        bool isStatusBarTranslucent, bool isNavigationBarTranslucent) {
             auto self = weakSelf.lock();
             if (!self) {
                 return 0;
@@ -147,12 +131,10 @@ void ReanimatedModule::installTurboModule(facebook::jsi::Runtime &rt) {
         auto napiTag = arkJs.createInt(handlerTag);
         auto napiState = arkJs.createInt(newState);
         auto napiTurboModuleObject = arkJs.getObject(self->m_ctx.arkTSTurboModuleInstanceRef);
-        napiTurboModuleObject.call("setGestureHandlerState", {napiTag, napiState});
+        napiTurboModuleObject.call("setGestureHandlerState", { napiTag, napiState });
     };
-
     PlatformDepMethodsHolder platformDepMethodsHolder = {
         requestRender,
-        synchronouslyUpdateUIPropsFunction,
         getAnimationTimestamp,
         progressLayoutAnimation,
         endLayoutAnimation,
@@ -163,11 +145,23 @@ void ReanimatedModule::installTurboModule(facebook::jsi::Runtime &rt) {
         unsubscribeFromKeyboardEventsFunction,
         maybeFlushUIUpdatesQueueFunction,
     };
-
-    auto nativeReanimatedModule =
-        std::make_shared<NativeReanimatedModule>(rt, jsInvoker_, m_ctx.jsQueue, uiScheduler, platformDepMethodsHolder);
-
+    auto isReducedMotion = false;
+    auto isBridgeless = true;
+    auto workletsModule = [weakSelf = weak_from_this()]() -> std::shared_ptr<WorkletsModule> {
+        auto self = weakSelf.lock();
+        if (!self) {
+            return nullptr;
+        }
+        auto instance = self->m_ctx.instance.lock();
+        if (instance == nullptr) {
+            return nullptr;
+        }
+        return instance->getTurboModule<WorkletsModule>("WorkletsModule");
+    };
+    auto nativeReanimatedModule = std::make_shared<ReanimatedModuleProxy>(workletsModule()->getWorkletsModuleProxy(),
+        rt, jsInvoker_, platformDepMethodsHolder, isBridgeless, isReducedMotion);
     weakNativeReanimatedModule_ = nativeReanimatedModule;
+    nativeReanimatedModule->init(platformDepMethodsHolder);
     ReanimatedPerformOperations reanimatedPerformOperations = [weakNativeReanimatedModule =
                                                                    weakNativeReanimatedModule_]() {
         if (auto nativeReanimatedModule = weakNativeReanimatedModule.lock()) {
@@ -178,14 +172,12 @@ void ReanimatedModule::installTurboModule(facebook::jsi::Runtime &rt) {
 
     WorkletRuntimeCollector::install(rt);
 
-    auto isReducedMotion = false;
-
-    RNRuntimeDecorator::decorate(rt, nativeReanimatedModule, isReducedMotion);
+    RNRuntimeDecorator::decorate(rt, nativeReanimatedModule);
     injectDependencies(rt);
 
-    eventListener = std::make_shared<facebook::react::EventListener>(
-        [weakNativeReanimatedModule = weakNativeReanimatedModule_,
-         weakTaskExecutor = std::weak_ptr{m_ctx.taskExecutor}](facebook::react::RawEvent const &rawEvent) {
+    eventListener =
+        std::make_shared<facebook::react::EventListener>([weakNativeReanimatedModule = weakNativeReanimatedModule_,
+        weakTaskExecutor = std::weak_ptr{ m_ctx.taskExecutor }](facebook::react::RawEvent const & rawEvent) {
             auto taskExecutor = weakTaskExecutor.lock();
             auto nativeReanimatedModule = weakNativeReanimatedModule.lock();
             if (!nativeReanimatedModule || !taskExecutor || !taskExecutor->isOnTaskThread(TaskThread::MAIN)) {
@@ -209,14 +201,16 @@ void ReanimatedModule::installTurboModule(facebook::jsi::Runtime &rt) {
         });
     m_ctx.scheduler->addEventListener(eventListener);
 }
-void ReanimatedModule::injectDependencies(facebook::jsi::Runtime & /*rt*/) {
+void ReanimatedModule::injectDependencies(facebook::jsi::Runtime & /* rt */)
+{
     const auto uiManager = m_ctx.scheduler->getUIManager();
     if (auto nativeReanimatedModule = weakNativeReanimatedModule_.lock()) {
         nativeReanimatedModule->initializeFabric(uiManager);
     }
 }
 
-void ReanimatedModule::callKeyBord(double height, int status) {
+void ReanimatedModule::callKeyBord(double height, int status)
+{
     if (keyboardEventDataUpdater_) {
         keyboardEventDataUpdater_(status, height);
     }

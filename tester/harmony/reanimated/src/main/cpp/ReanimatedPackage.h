@@ -1,13 +1,12 @@
 #include "RNOH/Package.h"
 
 namespace rnoh {
+class ReanimatedPackage : public Package {
+public:
+    ReanimatedPackage(Package::Context ctx) : Package(ctx) {}
 
-    class ReanimatedPackage : public Package {
-    public:
-        ReanimatedPackage(Package::Context ctx) : Package(ctx) {}
-    
-        std::unique_ptr<TurboModuleFactoryDelegate> createTurboModuleFactoryDelegate() override;
-    
-        std::vector<ArkTSMessageHandler::Shared> createArkTSMessageHandlers() override;
-    };
+    std::unique_ptr<TurboModuleFactoryDelegate> createTurboModuleFactoryDelegate() override;
+
+    std::vector<ArkTSMessageHandler::Shared> createArkTSMessageHandlers() override;
+};
 } // namespace rnoh
