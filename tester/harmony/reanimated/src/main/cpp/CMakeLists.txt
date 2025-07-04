@@ -9,7 +9,7 @@ add_compile_definitions(HERMES_ENABLE_DEBUGGER=1)
 
 
 
-set(REANIMATED_SRC_DIR "${NODE_MODULES}/react-native-reanimated/Common")
+set(REANIMATED_SRC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/Common")
 set(PATCHES_DIR "${CMAKE_CURRENT_SOURCE_DIR}/patches")
 
 file(GLOB rnoh_reanimated_SRC CONFIGURE_DEPENDS *.cpp)
