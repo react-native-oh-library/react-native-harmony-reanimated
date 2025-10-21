@@ -191,7 +191,9 @@ void ReanimatedModule::installTurboModule(facebook::jsi::Runtime &rt) {
             if (!nativeReanimatedModule || !taskExecutor || !taskExecutor->isOnTaskThread(TaskThread::MAIN)) {
                 return false;
             }
-
+            if (eventType.empty()) {
+                return false;
+            }
             auto eventType = rawEvent.type;
             auto frameTime = getMillisSinceEpoch();
 
@@ -205,7 +207,9 @@ void ReanimatedModule::installTurboModule(facebook::jsi::Runtime &rt) {
             } else if (eventType.rfind("topLayout", 0) == 0) { // 针对onLayout事件，不阻断，采用系统处理
                 return false;
             }
-            return nativeReanimatedModule->handleRawEvent(rawEvent, frameTime);
+            //        removed temporarily, event listener mechanism needs to be fixed on RN side
+            //        return nativeReanimatedModule->handleRawEvent(rawEvent, frameTime);
+            return false;
         });
     m_ctx.scheduler->addEventListener(eventListener);
 }
