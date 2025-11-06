@@ -8,6 +8,7 @@
 #include "Shareables.h"
 
 #include <memory>
+#include <stdexcept>
 #include <string>
 #include <thread>
 #include <utility>
@@ -30,6 +31,9 @@ class WorkletRuntime : public jsi::HostObject,
   void installValueUnpacker(const std::string &valueUnpackerCode);
 
   jsi::Runtime &getJSIRuntime() const {
+    if (runtime_ == nullptr) {
+        throw std::runtime_error("[Reanimated] WorkletRuntime::getJSIRuntime() called on destroy);
+    }
     return *runtime_;
   }
 

@@ -21,6 +21,9 @@ static double getMillisSinceEpoch() {
 jsi::Value installTurboModule(facebook::jsi::Runtime &rt, react::TurboModule &turboModule,
                               const facebook::jsi::Value *args, size_t count) {
     auto self = static_cast<ReanimatedModule *>(&turboModule);
+    if (self == nullptr) {
+        return facebook::jsi::Value::undefined();
+    }
     self->installTurboModule(rt);
     return facebook::jsi::Value::undefined();
 }

@@ -152,16 +152,21 @@ void NativeReanimatedModule::scheduleOnUI(
     const jsi::Value &worklet) {
   auto shareableWorklet = extractShareableOrThrow<ShareableWorklet>(
       rt, worklet, "[Reanimated] Only worklets can be scheduled to run on UI.");
-  uiScheduler_->scheduleOnUI([=] {
+  uiScheduler_->scheduleOnUI([weakUiWorkletRuntime,ShareableWorklet] {
+        auto uiWorkletRuntime = weakUiWorkletRuntime.lock();
+        if (uiWorkletRuntime == nullptr) {
+           // Runtime has been destroyed, skip execution
+          return;
+        }
 #if JS_RUNTIME_HERMES
     // JSI's scope defined here allows for JSI-objects to be cleared up after
     // each runtime loop. Within these loops we typically create some temporary
     // JSI objects and hence it allows for such objects to be garbage collected
     // much sooner.
     // Apparently the scope API is only supported on Hermes at the moment.
-    const auto scope = jsi::Scope(uiWorkletRuntime_->getJSIRuntime());
+    const auto scope = jsi::Scope(uiWorkletRuntime->getJSIRuntime());
 #endif
-    uiWorkletRuntime_->runGuarded(shareableWorklet);
+    uiWorkletRuntime->runGuarded(shareableWorklet);
   });
 }
 
@@ -241,7 +246,12 @@ void NativeReanimatedModule::unregisterEventHandler(
     const jsi::Value &registrationId) {
   uint64_t id = registrationId.asNumber();
   uiScheduler_->scheduleOnUI(
-      [=] { eventHandlerRegistry_->unregisterEventHandler(id); });
+      [=] { 
+        if (eventHandlerRegistry_ == nullptr) {
+            return;
+        }
+        eventHandlerRegistry_->unregisterEventHandler(id); 
+    });
 }
 
 jsi::Value NativeReanimatedModule::getViewProp(
@@ -258,8 +268,13 @@ jsi::Value NativeReanimatedModule::getViewProp(
   const auto funPtr = std::make_shared<jsi::Function>(
       callback.getObject(rnRuntime).asFunction(rnRuntime));
 
-  uiScheduler_->scheduleOnUI([=]() {
-    jsi::Runtime &uiRuntime = uiWorkletRuntime_->getJSIRuntime();
+  uiScheduler_->scheduleOnUI([=, weakUiWorkletRuntime]() {
+    auto uiWorkletRuntime = weakUiWorkletRuntime.lock();
+    if (uiWorkletRuntime == nullptr) {
+       // Runtime has been destroyed, skip execution
+      return;
+    }
+    jsi::Runtime &uiRuntime = uiWorkletRuntime->getJSIRuntime();
     const auto propNameValue =
         jsi::String::createFromUtf8(uiRuntime, propNameStr);
     const auto resultValue =
@@ -348,6 +363,10 @@ void NativeReanimatedModule::requestAnimationFrame(
 
 void NativeReanimatedModule::maybeRequestRender() {
   if (!renderRequested_) {
+    if (uiWorkletRuntime_ == nullptr) {
+       // Runtime has been destroyed, skip rendering
+       return;
+    }
     renderRequested_ = true;
     jsi::Runtime &uiRuntime = uiWorkletRuntime_->getJSIRuntime();
     requestRender_(onRenderCallback_, uiRuntime);
@@ -355,6 +374,11 @@ void NativeReanimatedModule::maybeRequestRender() {
 }
 
 void NativeReanimatedModule::onRender(double timestampMs) {
+  if (uiWorkletRuntime_ == nullptr) {
+     // Runtime has been destroyed, skip rendering
+     frameCallbacks_.clear();
+     return;
+  }
   auto callbacks = std::move(frameCallbacks_);
   frameCallbacks_.clear();
   jsi::Runtime &uiRuntime = uiWorkletRuntime_->getJSIRuntime();
@@ -435,6 +459,10 @@ bool NativeReanimatedModule::handleEvent(
     const int emitterReactTag,
     const jsi::Value &payload,
     double currentTime) {
+    if (uiWorkletRuntime_ == nullptr) {
+       // Runtime has been destroyed, skip processing
+       return false;
+    }
   eventHandlerRegistry_->processEvent(
       uiWorkletRuntime_, currentTime, eventName, emitterReactTag, payload);
 
@@ -461,6 +489,10 @@ bool NativeReanimatedModule::handleRawEvent(
   if (eventType.rfind("top", 0) == 0) {
     eventType = "on" + eventType.substr(3);
   }
+  if (uiWorkletRuntime_ == nullptr) {
+       // Runtime has been destroyed, skip processing
+       return false;
+    }
   jsi::Runtime &rt = uiWorkletRuntime_->getJSIRuntime();
 #if REACT_NATIVE_MINOR_VERSION >= 73
   const auto &eventPayload = rawEvent.eventPayload;
@@ -502,6 +534,12 @@ void NativeReanimatedModule::performOperations() {
     // nothing to do
     return;
   }
+  if (uiWorkletRuntime_ == nullptr) {
+       // Runtime has been destroyed, skip processing
+        operationsInBatch_.clear();
+        tagsToRemove_.clear();
+       return;
+   }
 
   auto copiedOperationsQueue = std::move(operationsInBatch_);
   operationsInBatch_.clear();
