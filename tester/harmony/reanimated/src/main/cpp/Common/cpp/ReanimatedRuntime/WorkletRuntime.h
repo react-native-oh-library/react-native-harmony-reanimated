@@ -32,7 +32,7 @@ class WorkletRuntime : public jsi::HostObject,
 
   jsi::Runtime &getJSIRuntime() const {
     if (runtime_ == nullptr) {
-        throw std::runtime_error("[Reanimated] WorkletRuntime::getJSIRuntime() called on destroy);
+        throw std::runtime_error("[Reanimated] WorkletRuntime::getJSIRuntime() called on destroy");
     }
     return *runtime_;
   }

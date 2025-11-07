@@ -73,7 +73,7 @@ void EventHandlerRegistry::processEvent(
     }
   }
     
-    if (uiWorkletRuntime- == nullptr) {
+    if (uiWorkletRuntime == nullptr) {
         // Runtime has been destroyed, skip processing
         return;
     }

@@ -151,8 +151,9 @@ void NativeReanimatedModule::scheduleOnUI(
     jsi::Runtime &rt,
     const jsi::Value &worklet) {
   auto shareableWorklet = extractShareableOrThrow<ShareableWorklet>(
-      rt, worklet, "[Reanimated] Only worklets can be scheduled to run on UI.");
-  uiScheduler_->scheduleOnUI([weakUiWorkletRuntime,ShareableWorklet] {
+      rt, worklet, "[Reanimated] Only worklets can be scheduled to run on UI."); 
+  auto weakUiWorkletRuntime = std::weak_ptr<WorkletRuntime>(uiWorkletRuntime_);
+  uiScheduler_->scheduleOnUI([weakUiWorkletRuntime, ShareableWorklet] {
         auto uiWorkletRuntime = weakUiWorkletRuntime.lock();
         if (uiWorkletRuntime == nullptr) {
            // Runtime has been destroyed, skip execution
