@@ -194,10 +194,10 @@ void ReanimatedModule::installTurboModule(facebook::jsi::Runtime &rt) {
             if (!nativeReanimatedModule || !taskExecutor || !taskExecutor->isOnTaskThread(TaskThread::MAIN)) {
                 return false;
             }
+            auto eventType = rawEvent.type;
             if (eventType.empty()) {
                 return false;
             }
-            auto eventType = rawEvent.type;
             auto frameTime = getMillisSinceEpoch();
 
             // React Native prefixes event names with "top". If the event name starts with "on", the result is that the
