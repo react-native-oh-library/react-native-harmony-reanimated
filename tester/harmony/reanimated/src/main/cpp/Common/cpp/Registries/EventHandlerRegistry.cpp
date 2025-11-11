@@ -72,6 +72,11 @@ void EventHandlerRegistry::processEvent(
       }
     }
   }
+    
+    if (uiWorkletRuntime == nullptr) {
+        // Runtime has been destroyed, skip processing
+        return;
+    }
 
   jsi::Runtime &rt = uiWorkletRuntime->getJSIRuntime();
   eventPayload.asObject(rt).setProperty(
