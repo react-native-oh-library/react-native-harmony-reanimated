@@ -1,6 +1,6 @@
 {
   name: '@react-native-oh-tpl/react-native-reanimated',
-  version: '3.6.4-rc.4',
+  version: '3.6.4-rc.5',
   description: "",
   type: 'module',
   main: 'index.ets',
