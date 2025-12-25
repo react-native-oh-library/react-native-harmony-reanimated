@@ -17,15 +17,25 @@ WorkletRuntime::WorkletRuntime(
   WorkletRuntimeDecorator::decorate(rt, name, jsScheduler);
 }
 
-void WorkletRuntime::installValueUnpacker(
-    const std::string &valueUnpackerCode) {
-  jsi::Runtime &rt = *runtime_;
-  auto codeBuffer = std::make_shared<const jsi::StringBuffer>(
-      "(" + valueUnpackerCode + "\n)");
-  auto valueUnpacker = rt.evaluateJavaScript(codeBuffer, "installValueUnpacker")
-                           .asObject(rt)
-                           .asFunction(rt);
-  rt.global().setProperty(rt, "__valueUnpacker", valueUnpacker);
+void WorkletRuntime::installValueUnpacker(const std::string &valueUnpackerCode) {
+    if (valueUnpackerCode.empty() || !runtime_) {
+        return;
+    }
+    jsi::Runtime &rt = *runtime_;
+    auto codeBuffer = std::make_shared<const jsi::StringBuffer>("(" + valueUnpackerCode + "\n)");
+    if (!codeBuffer) { //防止极限条件下没有分配到内存
+        return;
+    }
+    auto valueUnpacker = rt.evaluateJavaScript(codeBuffer, "installValueUnpacker");
+    if (!valueUnpacker.isObject()) {
+        return;
+    }
+    auto valueUnpackerObject = valueUnpacker.asObject(rt);
+    if (!valueUnpackerObject.isFunction(rt)) {
+        return;
+    }
+    auto valueUnpackerFun =  valueUnpackerObject.asFunction(rt);
+    rt.global().setProperty(rt, "__valueUnpacker", valueUnpackerFun);
 }
 
 jsi::Value WorkletRuntime::get(
